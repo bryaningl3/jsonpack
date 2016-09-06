@@ -1,6 +1,17 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var schema = require('./lib/schema/schema');
+
+module.exports = function () {
+	'use strict';
+
+	return schema;
+}();
+
+},{"./lib/schema/schema":3}],2:[function(require,module,exports){
+'use strict';
+
 var is = require('./../../utilities/is');
 
 module.exports = function () {
@@ -42,7 +53,7 @@ module.exports = function () {
 	return header;
 }();
 
-},{"./../../utilities/is":16}],2:[function(require,module,exports){
+},{"./../../utilities/is":17}],3:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -187,7 +198,7 @@ module.exports = function () {
 }();
 
 }).call(this,require("buffer").Buffer)
-},{"./../utilities/is":16,"./header/header":1,"./types/boolean":3,"./types/date":4,"./types/double":5,"./types/float":6,"./types/int16":7,"./types/int32":8,"./types/int48":9,"./types/int8":10,"./types/string":11,"./types/uint16":12,"./types/uint32":13,"./types/uint48":14,"./types/uint8":15,"buffer":18}],3:[function(require,module,exports){
+},{"./../utilities/is":17,"./header/header":2,"./types/boolean":4,"./types/date":5,"./types/double":6,"./types/float":7,"./types/int16":8,"./types/int32":9,"./types/int48":10,"./types/int8":11,"./types/string":12,"./types/uint16":13,"./types/uint32":14,"./types/uint48":15,"./types/uint8":16,"buffer":19}],4:[function(require,module,exports){
 'use strict';
 
 var uint8 = require('./uint8');
@@ -211,7 +222,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./uint8":15}],4:[function(require,module,exports){
+},{"./uint8":16}],5:[function(require,module,exports){
 'use strict';
 
 var int48 = require('./int48');
@@ -235,7 +246,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./int48":9}],5:[function(require,module,exports){
+},{"./int48":10}],6:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -257,7 +268,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -279,7 +290,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -301,7 +312,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -323,7 +334,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -345,7 +356,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -367,7 +378,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -410,7 +421,7 @@ module.exports = function () {
 }();
 
 }).call(this,require("buffer").Buffer)
-},{"./uint16":12,"buffer":18}],12:[function(require,module,exports){
+},{"./uint16":13,"buffer":19}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -432,7 +443,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -454,7 +465,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -476,7 +487,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -498,7 +509,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -559,7 +570,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -685,7 +696,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -2237,14 +2248,14 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":17,"ieee754":20,"isarray":19}],19:[function(require,module,exports){
+},{"base64-js":18,"ieee754":21,"isarray":20}],20:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -2330,526 +2341,4 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],21:[function(require,module,exports){
-'use strict';
-
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-} : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-};
-
-var header = require('./../../../../lib/schema/header/header');
-
-describe('when generating a header byte', function () {
-	'use strict';
-
-	describe('for a value that exists', function () {
-		var index = void 0;
-		var value = void 0;
-
-		var byte = void 0;
-
-		beforeEach(function () {
-			byte = header.getByte(index = 13, value = 'a byte that is neither null or undefined');
-		});
-
-		it('the header byte should be a number', function () {
-			expect(typeof byte === 'undefined' ? 'undefined' : _typeof(byte)).toEqual('number');
-		});
-
-		it('the header byte should be one byte long', function () {
-			expect(byte >>> 8).toEqual(0);
-		});
-
-		it('the header byte should contain the field index', function () {
-			expect(header.getIndex(byte)).toEqual(index);
-		});
-
-		it('the header byte should indicate a value is present', function () {
-			expect(header.getValueIsPresent(byte)).toEqual(true);
-		});
-
-		it('the header byte should not indicate a null value', function () {
-			expect(header.getValueIsNull(byte)).toEqual(false);
-		});
-
-		it('the header byte should not indicate an undefined value', function () {
-			expect(header.getValueIsUndefined(byte)).toEqual(false);
-		});
-	});
-
-	describe('for a null value', function () {
-		var index = void 0;
-		var value = void 0;
-
-		var byte = void 0;
-
-		beforeEach(function () {
-			byte = header.getByte(index = 13, value = null);
-		});
-
-		it('the header byte should be a number', function () {
-			expect(typeof byte === 'undefined' ? 'undefined' : _typeof(byte)).toEqual('number');
-		});
-
-		it('the header byte should be one byte long', function () {
-			expect(byte >>> 8).toEqual(0);
-		});
-
-		it('the header byte should contain the field index', function () {
-			expect(header.getIndex(byte)).toEqual(index);
-		});
-
-		it('the header byte should indicate a value is not present', function () {
-			expect(header.getValueIsPresent(byte)).toEqual(false);
-		});
-
-		it('the header byte should indicate a null value', function () {
-			expect(header.getValueIsNull(byte)).toEqual(true);
-		});
-
-		it('the header byte should not indicate an undefined byte', function () {
-			expect(header.getValueIsUndefined(byte)).toEqual(false);
-		});
-	});
-
-	describe('for an undefined value', function () {
-		var index = void 0;
-		var value = void 0;
-
-		var byte = void 0;
-
-		beforeEach(function () {
-			byte = header.getByte(index = 13, value = undefined);
-		});
-
-		it('the header byte should be a number', function () {
-			expect(typeof byte === 'undefined' ? 'undefined' : _typeof(byte)).toEqual('number');
-		});
-
-		it('the header byte should be one byte long', function () {
-			expect(byte >>> 8).toEqual(0);
-		});
-
-		it('the header byte should contain the field index', function () {
-			expect(header.getIndex(byte)).toEqual(index);
-		});
-
-		it('the header byte should indicate a value is not present', function () {
-			expect(header.getValueIsPresent(byte)).toEqual(false);
-		});
-
-		it('the header byte should not indicate a null value', function () {
-			expect(header.getValueIsNull(byte)).toEqual(false);
-		});
-
-		it('the header byte should indicate an undefined byte', function () {
-			expect(header.getValueIsUndefined(byte)).toEqual(true);
-		});
-	});
-});
-
-},{"./../../../../lib/schema/header/header":1}],22:[function(require,module,exports){
-(function (Buffer){
-'use strict';
-
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-} : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-};
-
-var factory = require('./../../../lib/schema/schema');
-
-describe('when generating a schema', function () {
-	'use strict';
-
-	describe('composed of [ { name: "miles", type: "int32" } ]', function () {
-		var schema = void 0;
-
-		beforeEach(function () {
-			schema = factory.create([{ name: "miles", type: "int32" }]);
-		});
-
-		describe('and serializing { miles: 41 }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ miles: 41 });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be five bytes long', function () {
-				expect(serialized.length).toEqual(5);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should contain the miles field', function () {
-					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
-				});
-
-				it('should have a value of 41 for the miles field', function () {
-					expect(deserialized.miles).toEqual(41);
-				});
-			});
-		});
-
-		describe('and serializing { miles: null }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ miles: null });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be one byte long', function () {
-				expect(serialized.length).toEqual(1);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should contain the miles field', function () {
-					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
-				});
-
-				it('should have a null value for the miles field', function () {
-					expect(deserialized.miles).toEqual(null);
-				});
-			});
-		});
-
-		describe('and serializing { miles: undefined }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ miles: undefined });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be one byte long', function () {
-				expect(serialized.length).toEqual(1);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should contain the miles field', function () {
-					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
-				});
-
-				it('should have an undefined value for the miles field', function () {
-					expect(deserialized.miles).toEqual(undefined);
-				});
-			});
-		});
-
-		describe('and serializing { }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({});
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be zero bytes long', function () {
-				expect(serialized.length).toEqual(0);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should not contain the miles field', function () {
-					expect(deserialized.hasOwnProperty('miles')).toEqual(false);
-				});
-			});
-		});
-	});
-
-	describe('composed of [ { name: "amount", type: "double" }, { name: "units", type: "string" } ]', function () {
-		var schema = void 0;
-
-		beforeEach(function () {
-			schema = factory.create([{ name: "amount", type: "double" }, { name: "units", type: "string" }]);
-		});
-
-		describe('and serializing { amount: Math.PI, units: "radians" }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ amount: Math.PI, units: "radians" });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be bytes 19 long', function () {
-				expect(serialized.length).toEqual(19);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should contain the amount field', function () {
-					expect(deserialized.hasOwnProperty('amount')).toEqual(true);
-				});
-
-				it('should have a value of Math.PI for the amount field', function () {
-					expect(deserialized.amount).toEqual(Math.PI);
-				});
-
-				it('should contain the units field', function () {
-					expect(deserialized.hasOwnProperty('units')).toEqual(true);
-				});
-
-				it('should have a value of "radians" for the units field', function () {
-					expect(deserialized.units).toEqual("radians");
-				});
-			});
-		});
-
-		describe('and serializing { amount: 180 }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ amount: 180 });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be bytes 9 long', function () {
-				expect(serialized.length).toEqual(9);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should contain the amount field', function () {
-					expect(deserialized.hasOwnProperty('amount')).toEqual(true);
-				});
-
-				it('should have a value of 180 for the amount field', function () {
-					expect(deserialized.amount).toEqual(180);
-				});
-
-				it('should not contain the units field', function () {
-					expect(deserialized.hasOwnProperty('units')).toEqual(false);
-				});
-			});
-		});
-
-		describe('and serializing { units: "degrees" }', function () {
-			var serialized = void 0;
-
-			beforeEach(function () {
-				serialized = schema.encode({ units: "degrees" });
-			});
-
-			it('should be a buffer', function () {
-				expect(serialized instanceof Buffer).toEqual(true);
-			});
-
-			it('should be bytes 19 long', function () {
-				expect(serialized.length).toEqual(10);
-			});
-
-			describe('and deserializing the buffer', function () {
-				var deserialized = void 0;
-
-				beforeEach(function () {
-					deserialized = schema.decode(serialized);
-				});
-
-				it('should be an object', function () {
-					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
-				});
-
-				it('should not contain the amount field', function () {
-					expect(deserialized.hasOwnProperty('amount')).toEqual(false);
-				});
-
-				it('should contain the units field', function () {
-					expect(deserialized.hasOwnProperty('units')).toEqual(true);
-				});
-
-				it('should have a value of "degrees" for the units field', function () {
-					expect(deserialized.units).toEqual("degrees");
-				});
-			});
-		});
-	});
-});
-
-}).call(this,require("buffer").Buffer)
-},{"./../../../lib/schema/schema":2,"buffer":18}],23:[function(require,module,exports){
-(function (Buffer){
-'use strict';
-
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-} : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-};
-
-var boolean = require('./../../../../lib/schema/types/boolean');
-
-describe('when checking the length of serialized boolean value', function () {
-	describe('and the value is true', function () {
-		it('should be one', function () {
-			expect(boolean.getByteLength(true)).toEqual(1);
-		});
-	});
-
-	describe('and the value is false', function () {
-		it('should be one', function () {
-			expect(boolean.getByteLength(false)).toEqual(1);
-		});
-	});
-});
-
-describe('when writing a boolean to a buffer', function () {
-	'use strict';
-
-	var allocateBuffer = function () {
-		if (typeof Buffer.allocUnsafe === 'function') {
-			return Buffer.allocUnsafe;
-		} else {
-			return function (size) {
-				return new Buffer(size);
-			};
-		}
-	}();
-
-	var buffer = void 0;
-	var writeOffset = void 0;
-
-	beforeEach(function () {
-		buffer = allocateBuffer(1);
-		writeOffset = 0;
-	});
-
-	describe('and the value is true', function () {
-		beforeEach(function () {
-			boolean.write(buffer, true, writeOffset);
-		});
-
-		describe('and the buffer is read', function () {
-			var value = void 0;
-			var readOffset = void 0;
-
-			beforeEach(function () {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
-			});
-
-			it('should be a boolean value', function () {
-				expect(typeof value === 'undefined' ? 'undefined' : _typeof(value)).toEqual('boolean');
-			});
-
-			it('should be a true value', function () {
-				expect(value).toEqual(true);
-			});
-		});
-	});
-
-	describe('and the value is false', function () {
-		beforeEach(function () {
-			boolean.write(buffer, false, writeOffset);
-		});
-
-		describe('and the buffer is read', function () {
-			var value = void 0;
-			var readOffset = void 0;
-
-			beforeEach(function () {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
-			});
-
-			it('should be a boolean value', function () {
-				expect(typeof value === 'undefined' ? 'undefined' : _typeof(value)).toEqual('boolean');
-			});
-
-			it('should be a true value', function () {
-				expect(value).toEqual(false);
-			});
-		});
-	});
-});
-
-}).call(this,require("buffer").Buffer)
-},{"./../../../../lib/schema/types/boolean":3,"buffer":18}]},{},[21,22,23]);
+},{}]},{},[1]);

@@ -1,4 +1,4 @@
-var schema = require('./lib/scheam/schema');
+var schema = require('./lib/schema/schema');
 
 module.exports = (() => {
 	'use strict';

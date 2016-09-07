@@ -149,6 +149,38 @@ describe('when generating a schema', () => {
 				});
 			});
 		});
+
+		describe('and serializing { kilometers: 0.621 }', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = schema.encode({ kilometers: 0.621 });
+			});
+
+			it('should be a buffer', function() {
+				expect(serialized instanceof Buffer).toEqual(true);
+			});
+
+			it('should be zero bytes long', () => {
+				expect(serialized.length).toEqual(0);
+			});
+
+			describe('and deserializing the buffer', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', () => {
+					expect(typeof deserialized).toEqual('object');
+				});
+
+				it('should not contain the miles field', function() {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(false);
+				});
+			});
+		});
 	});
 
 	describe('composed of [ { name: "amount", type: "double" }, { name: "units", type: "string" } ]', () => {

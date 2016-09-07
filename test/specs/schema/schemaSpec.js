@@ -281,5 +281,41 @@ describe('when generating a schema', () => {
 				});
 			});
 		});
+
+		describe('and serializing { }', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = schema.encode({ });
+			});
+
+			it('should be a buffer', function() {
+				expect(serialized instanceof Buffer).toEqual(true);
+			});
+
+			it('should be bytes 0 long', function() {
+				expect(serialized.length).toEqual(0);
+			});
+
+			describe('and deserializing the buffer', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', () => {
+					expect(typeof deserialized).toEqual('object');
+				});
+
+				it('should not contain the amount field', function() {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(false);
+				});
+
+				it('should not contain the units field', function() {
+					expect(deserialized.hasOwnProperty('units')).toEqual(false);
+				});
+			});
+		});
 	});
 });

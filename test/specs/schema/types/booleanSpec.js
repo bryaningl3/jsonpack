@@ -14,7 +14,6 @@ describe('when checking the length of serialized boolean value', () => {
 	});
 });
 
-
 describe('when writing a boolean to a buffer', () => {
 	'use strict';
 
@@ -29,59 +28,51 @@ describe('when writing a boolean to a buffer', () => {
 	})();
 
 	let buffer;
-	let writeOffset;
 
 	beforeEach(() => {
 		buffer = allocateBuffer(1);
-		writeOffset = 0;
 	});
 
 	describe('and the value is true', () => {
 		beforeEach(() => {
-			boolean.write(buffer, true, writeOffset);
+			boolean.write(buffer, true, 0);
 		});
 
 		describe('and the buffer is read', () => {
-			let value;
-			let readOffset;
+			let decoded;
 
 			beforeEach(() => {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
+				decoded = boolean.read(buffer, 0);
 			});
 
 			it('should be a boolean value', () => {
-				expect(typeof value).toEqual('boolean');
+				expect(typeof decoded).toEqual('boolean');
 			});
 
 			it('should be a true value', () => {
-				expect(value).toEqual(true);
+				expect(decoded).toEqual(true);
 			});
 		});
 	});
 
 	describe('and the value is false', () => {
 		beforeEach(() => {
-			boolean.write(buffer, false, writeOffset);
+			boolean.write(buffer, false, 0);
 		});
 
 		describe('and the buffer is read', () => {
-			let value;
-			let readOffset;
+			let decoded;
 
 			beforeEach(() => {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
+				decoded = boolean.read(buffer, 0);
 			});
 
 			it('should be a boolean value', () => {
-				expect(typeof value).toEqual('boolean');
+				expect(typeof decoded).toEqual('boolean');
 			});
 
 			it('should be a true value', () => {
-				expect(value).toEqual(false);
+				expect(decoded).toEqual(false);
 			});
 		});
 	});

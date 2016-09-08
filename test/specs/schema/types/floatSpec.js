@@ -46,7 +46,7 @@ describe('when writing a float to a buffer', () => {
 				decoded = float.read(buffer, 0);
 			});
 
-			it('should be a float value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 

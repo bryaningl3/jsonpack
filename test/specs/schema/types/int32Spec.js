@@ -46,7 +46,7 @@ describe('when writing a int32 to a buffer', () => {
 				decoded = int32.read(buffer, 0);
 			});
 
-			it('should be a int32 value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
@@ -75,7 +75,7 @@ describe('when writing a int32 to a buffer', () => {
 				decoded = int32.read(buffer, 0);
 			});
 
-			it('should be a int32 value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
@@ -104,7 +104,7 @@ describe('when writing a int32 to a buffer', () => {
 				decoded = int32.read(buffer, 0);
 			});
 
-			it('should be a int32 value', () => {
+			it('should be a nushould be a int32 valuember', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
@@ -114,13 +114,13 @@ describe('when writing a int32 to a buffer', () => {
 		});
 	});
 
-	describe('and the value is Math.pow(2, 31)', () => {
+	describe('and the value is more than the maximum', () => {
 		it('an exception should be thrown', () => {
 			expect(() => int32.write(buffer, Math.pow(2, 31), 0)).toThrow();
 		});
 	});
 
-	describe('and the value is (Math.pow(2, 31) * -1) - 1', () => {
+	describe('and the value is less than the minimum', () => {
 		it('an exception should be thrown', () => {
 			expect(() => int32.write(buffer, (Math.pow(2, 31) * -1) - 1, 0)).toThrow();
 		});

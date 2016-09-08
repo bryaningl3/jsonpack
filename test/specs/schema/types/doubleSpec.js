@@ -46,7 +46,7 @@ describe('when writing a double to a buffer', () => {
 				decoded = double.read(buffer, 0);
 			});
 
-			it('should be a double value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
@@ -75,7 +75,7 @@ describe('when writing a double to a buffer', () => {
 				decoded = double.read(buffer, 0);
 			});
 
-			it('should be a double value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 

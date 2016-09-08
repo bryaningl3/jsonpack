@@ -56,12 +56,12 @@ describe('when writing a int8 to a buffer', () => {
 		});
 	});
 
-	describe('and the value is the maximum value (127)', () => {
+	describe('and the value is the maximum value (Math.pow(2, 7) - 1)', () => {
 		let original;
 		let writeOffset;
 
 		beforeEach(() => {
-			writeOffset = int8.write(buffer, original = 127, 0);
+			writeOffset = int8.write(buffer, original = Math.pow(2, 7) - 1, 0);
 		});
 
 		it('should write one byte to the buffer', () => {
@@ -79,18 +79,18 @@ describe('when writing a int8 to a buffer', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
-			it('should equal 127', () => {
+			it('should equal Math.pow(2, 7) - 1', () => {
 				expect(decoded).toEqual(original);
 			});
 		});
 	});
 
-	describe('and the value is the minimum value (-128)', () => {
+	describe('and the value is the minimum value (Math.pow(2, 7) * -1)', () => {
 		let original;
 		let writeOffset;
 
 		beforeEach(() => {
-			writeOffset = int8.write(buffer, original = -128, 0);
+			writeOffset = int8.write(buffer, original = Math.pow(2, 7) * -1, 0);
 		});
 
 		it('should write one byte to the buffer', () => {
@@ -108,21 +108,21 @@ describe('when writing a int8 to a buffer', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
-			it('should equal -128', () => {
+			it('should equal Math.pow(2, 7) * -1', () => {
 				expect(decoded).toEqual(original);
 			});
 		});
 	});
 
-	describe('and the value is 128', () => {
+	describe('and the value is more than the maximum', () => {
 		it('an exception should be thrown', () => {
-			expect(() => int8.write(buffer, 128, 0)).toThrow();
+			expect(() => int8.write(buffer, Math.pow(2, 7), 0)).toThrow();
 		});
 	});
 
-	describe('and the value is -129', () => {
+	describe('and the value is less than the minimum', () => {
 		it('an exception should be thrown', () => {
-			expect(() => int8.write(buffer, -129, 0)).toThrow();
+			expect(() => int8.write(buffer, (Math.pow(2, 7) * -1) - 1, 0)).toThrow();
 		});
 	});
 });

@@ -46,7 +46,7 @@ describe('when writing a int16 to a buffer', () => {
 				decoded = int16.read(buffer, 0);
 			});
 
-			it('should be a int16 value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
@@ -56,12 +56,12 @@ describe('when writing a int16 to a buffer', () => {
 		});
 	});
 
-	describe('and the value is the maximum value (32767)', () => {
+	describe('and the value is the maximum value (Math.pow(2, 15) - 1)', () => {
 		let original;
 		let writeOffset;
 
 		beforeEach(() => {
-			writeOffset = int16.write(buffer, original = 32767, 0);
+			writeOffset = int16.write(buffer, original = Math.pow(2, 15) - 1, 0);
 		});
 
 		it('should write two bytes to the buffer', () => {
@@ -75,22 +75,22 @@ describe('when writing a int16 to a buffer', () => {
 				decoded = int16.read(buffer, 0);
 			});
 
-			it('should be a int16 value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
-			it('should equal 32767', () => {
+			it('should equal Math.pow(2, 15) - 1', () => {
 				expect(decoded).toEqual(original);
 			});
 		});
 	});
 
-	describe('and the value is the minimum value (-32768)', () => {
+	describe('and the value is the minimum value (Math.pow(2, 15) * -1)', () => {
 		let original;
 		let writeOffset;
 
 		beforeEach(() => {
-			writeOffset = int16.write(buffer, original = -32768, 0);
+			writeOffset = int16.write(buffer, original = Math.pow(2, 15) * -1, 0);
 		});
 
 		it('should write two bytes to the buffer', () => {
@@ -104,25 +104,25 @@ describe('when writing a int16 to a buffer', () => {
 				decoded = int16.read(buffer, 0);
 			});
 
-			it('should be a int16 value', () => {
+			it('should be a number', () => {
 				expect(typeof decoded).toEqual('number');
 			});
 
-			it('should equal -32768', () => {
+			it('should equal Math.pow(2, 15) * -1', () => {
 				expect(decoded).toEqual(original);
 			});
 		});
 	});
 
-	describe('and the value is 32768', () => {
+	describe('and the value is more than the maximum', () => {
 		it('an exception should be thrown', () => {
-			expect(() => int16.write(buffer, 32768, 0)).toThrow();
+			expect(() => int16.write(buffer, Math.pow(2, 15), 0)).toThrow();
 		});
 	});
 
-	describe('and the value is -32769', () => {
+	describe('and the value is less than the minimum', () => {
 		it('an exception should be thrown', () => {
-			expect(() => int16.write(buffer, -32769, 0)).toThrow();
+			expect(() => int16.write(buffer, (Math.pow(2, 15) * -1) - 1, 0)).toThrow();
 		});
 	});
 });

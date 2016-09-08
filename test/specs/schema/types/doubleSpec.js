@@ -22,7 +22,6 @@ describe('when writing a double to a buffer', () => {
 	})();
 
 	let buffer;
-	let writeOffset;
 
 	beforeEach(() => {
 		buffer = allocateBuffer(8);
@@ -30,9 +29,14 @@ describe('when writing a double to a buffer', () => {
 
 	describe('and the value is Math.E', () => {
 		let original;
+		let writeOffset;
 
 		beforeEach(() => {
-			double.write(buffer, original = Math.E, 0);
+			writeOffset = double.write(buffer, original = Math.E, 0);
+		});
+
+		it('should write eight bytes to the buffer', () => {
+			expect(writeOffset).toEqual(8);
 		});
 
 		describe('and the buffer is read', () => {
@@ -54,9 +58,14 @@ describe('when writing a double to a buffer', () => {
 
 	describe('and the value is one third', () => {
 		let original;
+		let writeOffset;
 
 		beforeEach(() => {
-			double.write(buffer, original = (1 / 3), 0);
+			writeOffset = double.write(buffer, original = (1 / 3), 0);
+		});
+
+		it('should write eight bytes to the buffer', () => {
+			expect(writeOffset).toEqual(8);
 		});
 
 		describe('and the buffer is read', () => {

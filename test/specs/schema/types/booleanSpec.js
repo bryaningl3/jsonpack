@@ -34,8 +34,14 @@ describe('when writing a boolean to a buffer', () => {
 	});
 
 	describe('and the value is true', () => {
+		let writeOffset;
+
 		beforeEach(() => {
-			boolean.write(buffer, true, 0);
+			writeOffset = boolean.write(buffer, true, 0);
+		});
+
+		it('should write one byte to the buffer', () => {
+			expect(writeOffset).toEqual(1);
 		});
 
 		describe('and the buffer is read', () => {
@@ -56,8 +62,14 @@ describe('when writing a boolean to a buffer', () => {
 	});
 
 	describe('and the value is false', () => {
+		let writeOffset;
+
 		beforeEach(() => {
-			boolean.write(buffer, false, 0);
+			writeOffset = boolean.write(buffer, false, 0);
+		});
+
+		it('should write one byte to the buffer', () => {
+			expect(writeOffset).toEqual(1);
 		});
 
 		describe('and the buffer is read', () => {

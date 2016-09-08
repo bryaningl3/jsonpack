@@ -22,7 +22,6 @@ describe('when writing a date to a buffer', () => {
 	})();
 
 	let buffer;
-	let writeOffset;
 
 	beforeEach(() => {
 		buffer = allocateBuffer(6);
@@ -30,9 +29,14 @@ describe('when writing a date to a buffer', () => {
 
 	describe('and the value is now', () => {
 		let original;
+		let writeOffset;
 
 		beforeEach(() => {
-			date.write(buffer, original = new Date(), 0);
+			writeOffset = date.write(buffer, original = new Date(), 0);
+		});
+
+		it('should write six bytes to the buffer', () => {
+			expect(writeOffset).toEqual(6);
 		});
 
 		describe('and the buffer is read', () => {

@@ -24,7 +24,7 @@ describe('when writing a int16 to a buffer', () => {
 	let buffer;
 
 	beforeEach(() => {
-		buffer = allocateBuffer(8);
+		buffer = allocateBuffer(4);
 	});
 
 	describe('and the value is 42', () => {
@@ -85,7 +85,7 @@ describe('when writing a int16 to a buffer', () => {
 		});
 	});
 
-	describe('and the value is minimum value (-32768)', () => {
+	describe('and the value is the minimum value (-32768)', () => {
 		let original;
 		let writeOffset;
 

@@ -24,7 +24,7 @@ describe('when writing a float to a buffer', () => {
 	let buffer;
 
 	beforeEach(() => {
-		buffer = allocateBuffer(8);
+		buffer = allocateBuffer(4);
 	});
 
 	describe('and the value is 1.5', () => {

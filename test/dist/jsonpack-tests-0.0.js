@@ -495,12 +495,6 @@ var boolean = require('./types/boolean'),
 module.exports = function () {
 	'use strict';
 
-	var STRING_PRESENT = String.fromCharCode(17);
-	var STRING_ABSENT = String.fromCharCode(18);
-	var STRING_UNDEFINDED = String.fromCharCode(19);
-	var STRING_NULL = String.fromCharCode(20);
-	var STRING_DELIMITER = String.fromCharCode(7);
-
 	var types = [boolean, date, double, float, int8, int16, int32, string, uint8, uint16, uint32, uint48].reduce(function (map, type) {
 		var name = type.getName();
 
@@ -509,8 +503,24 @@ module.exports = function () {
 		return map;
 	}, {});
 
+	var tokens = {
+		a: String.fromCharCode(18),
+		d: String.fromCharCode(7),
+		p: String.fromCharCode(17),
+		u: String.fromCharCode(19),
+		n: String.fromCharCode(20)
+	};
+
 	return {
-		create: function create(fields) {
+		create: function create(fields, options) {
+			var tokensToUse = void 0;
+
+			if (options && options.tokens) {
+				tokensToUse = options.tokens;
+			} else {
+				tokensToUse = tokens;
+			}
+
 			var schema = fields.reduce(function (accumulator, field, index) {
 				var name = field.name;
 
@@ -533,18 +543,18 @@ module.exports = function () {
 
 						var present = json.hasOwnProperty(name);
 
-						var header = STRING_ABSENT;
+						var header = tokensToUse.a;
 						var converted = '';
 
 						if (present) {
 							var value = json[name];
 
 							if (is.undefined(value)) {
-								header = STRING_UNDEFINDED;
+								header = tokensToUse.u;
 							} else if (is.null(value)) {
-								header = STRING_NULL;
+								header = tokensToUse.n;
 							} else {
-								header = STRING_PRESENT;
+								header = tokensToUse.p;
 								converted = '' + schema.sequence[i].type.convert(value);
 							}
 						}
@@ -554,22 +564,22 @@ module.exports = function () {
 						return accumulator;
 					}, []);
 
-					return data.join(STRING_DELIMITER);
+					return data.join(tokensToUse.d);
 				},
 				decode: function decode(data) {
-					var values = data.split(STRING_DELIMITER);
+					var values = data.split(tokensToUse.d);
 
 					return values.reduce(function (accumulator, s, i) {
 						var header = s.charAt(0);
 
-						if (header !== STRING_ABSENT) {
+						if (header !== tokensToUse.a) {
 							var definition = schema.sequence[i];
 
 							var value = void 0;
 
-							if (header === STRING_UNDEFINDED) {
+							if (header === tokensToUse.u) {
 								value = undefined;
-							} else if (header === STRING_NULL) {
+							} else if (header === tokensToUse.n) {
 								value = null;
 							} else {
 								value = definition.type.unconvert(s.substring(1));

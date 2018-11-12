@@ -503,24 +503,16 @@ module.exports = function () {
 		return map;
 	}, {});
 
-	var tokens = {
-		a: String.fromCharCode(18),
-		d: String.fromCharCode(7),
-		p: String.fromCharCode(17),
-		u: String.fromCharCode(19),
-		n: String.fromCharCode(20)
+	var TOKEN = {
+		DELIMITER: '|',
+		ABSENT: '-',
+		PRESENT: '+',
+		UNDEFINED: '<',
+		NULL: '>'
 	};
 
 	return {
-		create: function create(fields, options) {
-			var tokensToUse = void 0;
-
-			if (options && options.tokens) {
-				tokensToUse = options.tokens;
-			} else {
-				tokensToUse = tokens;
-			}
-
+		create: function create(fields) {
 			var schema = fields.reduce(function (accumulator, field, index) {
 				var name = field.name;
 
@@ -543,18 +535,18 @@ module.exports = function () {
 
 						var present = json.hasOwnProperty(name);
 
-						var header = tokensToUse.a;
+						var header = TOKEN.ABSENT;
 						var converted = '';
 
 						if (present) {
 							var value = json[name];
 
 							if (is.undefined(value)) {
-								header = tokensToUse.u;
+								header = TOKEN.UNDEFINED;
 							} else if (is.null(value)) {
-								header = tokensToUse.n;
+								header = TOKEN.NULL;
 							} else {
-								header = tokensToUse.p;
+								header = TOKEN.PRESENT;
 								converted = '' + schema.sequence[i].type.convert(value);
 							}
 						}
@@ -564,22 +556,22 @@ module.exports = function () {
 						return accumulator;
 					}, []);
 
-					return data.join(tokensToUse.d);
+					return data.join(TOKEN.DELIMITER);
 				},
 				decode: function decode(data) {
-					var values = data.split(tokensToUse.d);
+					var values = data.split(TOKEN.DELIMITER);
 
 					return values.reduce(function (accumulator, s, i) {
 						var header = s.charAt(0);
 
-						if (header !== tokensToUse.a) {
+						if (header !== TOKEN.ABSENT) {
 							var definition = schema.sequence[i];
 
 							var value = void 0;
 
-							if (header === tokensToUse.u) {
+							if (header === TOKEN.UNDEFINED) {
 								value = undefined;
-							} else if (header === tokensToUse.n) {
+							} else if (header === TOKEN.NULL) {
 								value = null;
 							} else {
 								value = definition.type.unconvert(s.substring(1));

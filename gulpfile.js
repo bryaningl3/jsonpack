@@ -71,8 +71,6 @@ gulp.task('build-browser-tests', function () {
 		.pipe(gulp.dest('test/dist'));
 });
 
-gulp.task('build-browser-components', [ 'build-browser' ]);
-
 gulp.task('build', [ 'build-browser-components' ]);
 
 gulp.task('execute-browser-tests', function () {

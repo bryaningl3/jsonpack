@@ -1,6 +1,6 @@
 {
   "name": "jsonpack",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Libary for serializing JSON objects to binary",
   "author": {
     "name": "Bryan Ingle",

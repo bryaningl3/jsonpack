@@ -71,8 +71,6 @@ gulp.task('build-browser-tests', function () {
 		.pipe(gulp.dest('test/dist'));
 });
 
-gulp.task('build', [ 'build-browser-components' ]);
-
 gulp.task('execute-browser-tests', function () {
 	return gulp.src('test/dist/jsonpack-tests-' + getVersionForComponent() + '.js')
 		.pipe(jasmine());
@@ -101,7 +99,6 @@ gulp.task('execute-tests', function (callback) {
 gulp.task('release', function (callback) {
 	runSequence(
 		'ensure-clean-working-directory',
-		'build',
 		'build-browser-tests',
 		'execute-browser-tests',
 		'execute-node-tests',

@@ -1,4 +1,4 @@
-var header = require('./../../../../lib/schema/header/header');
+var header = require('./../../../../../lib/schema/binary/header/header');
 
 describe('when generating a header byte', () => {
 	'use strict';

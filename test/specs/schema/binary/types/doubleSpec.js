@@ -1,4 +1,4 @@
-var double = require('./../../../../lib/schema/types/double');
+var double = require('./../../../../../lib/schema/binary/types/double');
 
 describe('when checking the length of serialized double instance', () => {
 	describe('and the value is Math.E', () => {

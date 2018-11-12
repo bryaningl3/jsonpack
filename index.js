@@ -1,7 +1,11 @@
-var schema = require('./lib/schema/schema');
+const binary = require('./lib/schema/binary/schema'),
+	string = require('./lib/schema/string/schema');
 
 module.exports = (() => {
 	'use strict';
 
-	return schema;
+	return {
+		binary: binary,
+		string: string
+	};
 })();

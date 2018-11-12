@@ -1,4 +1,4 @@
-var date = require('./../../../../lib/schema/types/date');
+var date = require('./../../../../../lib/schema/binary/types/date');
 
 describe('when checking the length of serialized date instance', () => {
 	describe('and the value is now', () => {

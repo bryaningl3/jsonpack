@@ -1,4 +1,4 @@
-var float = require('./../../../../lib/schema/types/float');
+var float = require('./../../../../../lib/schema/binary/types/float');
 
 describe('when checking the length of serialized float instance', () => {
 	describe('and the value is 1.5', () => {

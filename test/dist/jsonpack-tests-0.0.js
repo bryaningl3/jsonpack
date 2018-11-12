@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var is = require('./../../utilities/is');
+var is = require('./../../../utilities/is');
 
 module.exports = function () {
 	'use strict';
@@ -42,32 +42,31 @@ module.exports = function () {
 	return header;
 }();
 
-},{"./../../utilities/is":16}],2:[function(require,module,exports){
+},{"./../../../utilities/is":28}],2:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
-var is = require('./../utilities/is');
+var is = require('./../../utilities/is');
 
 var header = require('./header/header');
 
-var boolean = require('./types/boolean');
-var date = require('./types/date');
-var double = require('./types/double');
-var float = require('./types/float');
-var int8 = require('./types/int8');
-var int16 = require('./types/int16');
-var int32 = require('./types/int32');
-var int48 = require('./types/int48');
-var string = require('./types/string');
-var uint8 = require('./types/uint8');
-var uint16 = require('./types/uint16');
-var uint32 = require('./types/uint32');
-var uint48 = require('./types/uint48');
+var boolean = require('./types/boolean'),
+    date = require('./types/date'),
+    double = require('./types/double'),
+    float = require('./types/float'),
+    int8 = require('./types/int8'),
+    int16 = require('./types/int16'),
+    int32 = require('./types/int32'),
+    string = require('./types/string'),
+    uint8 = require('./types/uint8'),
+    uint16 = require('./types/uint16'),
+    uint32 = require('./types/uint32'),
+    uint48 = require('./types/uint48');
 
 module.exports = function () {
 	'use strict';
 
-	var types = [boolean, date, double, float, int8, int16, int32, int48, string, uint8, uint16, uint32, uint48].reduce(function (map, type) {
+	var types = [boolean, date, double, float, int8, int16, int32, string, uint8, uint16, uint32, uint48].reduce(function (map, type) {
 		var name = type.getName();
 
 		map[name] = type;
@@ -104,13 +103,11 @@ module.exports = function () {
 
 			return {
 				encode: function encode(json) {
-					var sequence = schema.sequence;
-
 					var names = Object.keys(json);
 					var bytes = names.reduce(function (sum, name) {
-						var length = void 0;
-
 						if (schema.map.hasOwnProperty(name)) {
+							var length = void 0;
+
 							var value = json[name];
 
 							if (is.null(value) || is.undefined(value)) {
@@ -118,27 +115,29 @@ module.exports = function () {
 							} else {
 								length = schema.map[name].type.getByteLength(value);
 							}
-						} else {
-							length = 0;
+
+							sum = sum + 1 + length;
 						}
 
-						return sum + 1 + length;
+						return sum;
 					}, 0);
 
 					var buffer = allocateBuffer(bytes);
 					var offset = 0;
 
 					names.forEach(function (name) {
-						var definition = schema.map[name];
-						var value = json[name];
+						if (schema.map.hasOwnProperty(name)) {
+							var definition = schema.map[name];
+							var value = json[name];
 
-						var headerByte = header.getByte(definition.index, value);
-						var present = header.getValueIsPresent(headerByte);
+							var headerByte = header.getByte(definition.index, value);
+							var present = header.getValueIsPresent(headerByte);
 
-						offset = uint8.write(buffer, headerByte, offset);
+							offset = uint8.write(buffer, headerByte, offset);
 
-						if (present) {
-							offset = definition.type.write(buffer, value, offset);
+							if (present) {
+								offset = definition.type.write(buffer, value, offset);
+							}
 						}
 					});
 
@@ -148,7 +147,6 @@ module.exports = function () {
 					var offset = 0;
 
 					var json = {};
-					var count = 0;
 
 					while (offset < buffer.length) {
 						var headerByte = uint8.read(buffer, offset);
@@ -187,7 +185,7 @@ module.exports = function () {
 }();
 
 }).call(this,require("buffer").Buffer)
-},{"./../utilities/is":16,"./header/header":1,"./types/boolean":3,"./types/date":4,"./types/double":5,"./types/float":6,"./types/int16":7,"./types/int32":8,"./types/int48":9,"./types/int8":10,"./types/string":11,"./types/uint16":12,"./types/uint32":13,"./types/uint48":14,"./types/uint8":15,"buffer":18}],3:[function(require,module,exports){
+},{"./../../utilities/is":28,"./header/header":1,"./types/boolean":3,"./types/date":4,"./types/double":5,"./types/float":6,"./types/int16":7,"./types/int32":8,"./types/int8":9,"./types/string":10,"./types/uint16":11,"./types/uint32":12,"./types/uint48":13,"./types/uint8":14,"buffer":30}],3:[function(require,module,exports){
 'use strict';
 
 var uint8 = require('./uint8');
@@ -211,23 +209,23 @@ module.exports = function () {
 	};
 }();
 
-},{"./uint8":15}],4:[function(require,module,exports){
+},{"./uint8":14}],4:[function(require,module,exports){
 'use strict';
 
-var int48 = require('./int48');
+var uint48 = require('./uint48');
 
 module.exports = function () {
 	'use strict';
 
 	return {
 		write: function write(buffer, value, offset) {
-			return int48.write(buffer, value.getTime(), offset);
+			return uint48.write(buffer, value.getTime(), offset);
 		},
 		read: function read(buffer, offset) {
-			return new Date(int48.read(buffer, offset));
+			return new Date(uint48.read(buffer, offset));
 		},
 		getByteLength: function getByteLength(value) {
-			return int48.getByteCount(0);
+			return uint48.getByteLength(0);
 		},
 		getName: function getName() {
 			return 'date';
@@ -235,7 +233,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./int48":9}],5:[function(require,module,exports){
+},{"./uint48":13}],5:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -331,28 +329,6 @@ module.exports = function () {
 
 	return {
 		write: function write(buffer, value, offset) {
-			return buffer.writeIntBE(value, offset, 6);
-		},
-		read: function read(buffer, offset) {
-			return buffer.readIntBE(offset, 6);
-		},
-		getByteLength: function getByteLength(value) {
-			return 6;
-		},
-		getName: function getName() {
-			return 'int48';
-		}
-	};
-}();
-
-},{}],10:[function(require,module,exports){
-'use strict';
-
-module.exports = function () {
-	'use strict';
-
-	return {
-		write: function write(buffer, value, offset) {
 			return buffer.writeInt8(value, offset);
 		},
 		read: function read(buffer, offset) {
@@ -367,7 +343,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -410,7 +386,7 @@ module.exports = function () {
 }();
 
 }).call(this,require("buffer").Buffer)
-},{"./uint16":12,"buffer":18}],12:[function(require,module,exports){
+},{"./uint16":11,"buffer":30}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -432,7 +408,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -454,7 +430,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -476,7 +452,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -498,15 +474,359 @@ module.exports = function () {
 	};
 }();
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var is = require('./../../utilities/is');
+
+var boolean = require('./types/boolean'),
+    date = require('./types/date'),
+    double = require('./types/double'),
+    float = require('./types/float'),
+    int8 = require('./types/int8'),
+    int16 = require('./types/int16'),
+    int32 = require('./types/int32'),
+    string = require('./types/string'),
+    uint8 = require('./types/uint8'),
+    uint16 = require('./types/uint16'),
+    uint32 = require('./types/uint32'),
+    uint48 = require('./types/uint48');
+
+module.exports = function () {
+	'use strict';
+
+	var STRING_PRESENT = String.fromCharCode(17);
+	var STRING_ABSENT = String.fromCharCode(18);
+	var STRING_UNDEFINDED = String.fromCharCode(19);
+	var STRING_NULL = String.fromCharCode(20);
+	var STRING_DELIMITER = String.fromCharCode(7);
+
+	var types = [boolean, date, double, float, int8, int16, int32, string, uint8, uint16, uint32, uint48].reduce(function (map, type) {
+		var name = type.getName();
+
+		map[name] = type;
+
+		return map;
+	}, {});
+
+	return {
+		create: function create(fields) {
+			var schema = fields.reduce(function (accumulator, field, index) {
+				var name = field.name;
+
+				var definition = {
+					name: name,
+					index: index,
+					type: types[field.type]
+				};
+
+				accumulator.map[name] = definition;
+				accumulator.sequence.push(definition);
+
+				return accumulator;
+			}, { map: {}, sequence: [] });
+
+			return {
+				encode: function encode(json) {
+					var data = fields.reduce(function (accumulator, field, i) {
+						var name = field.name;
+
+						var present = json.hasOwnProperty(name);
+
+						var header = STRING_ABSENT;
+						var converted = '';
+
+						if (present) {
+							var value = json[name];
+
+							if (is.undefined(value)) {
+								header = STRING_UNDEFINDED;
+							} else if (is.null(value)) {
+								header = STRING_NULL;
+							} else {
+								header = STRING_PRESENT;
+								converted = '' + schema.sequence[i].type.convert(value);
+							}
+						}
+
+						accumulator.push('' + header + converted);
+
+						return accumulator;
+					}, []);
+
+					return data.join(STRING_DELIMITER);
+				},
+				decode: function decode(data) {
+					var values = data.split(STRING_DELIMITER);
+
+					return values.reduce(function (accumulator, s, i) {
+						var header = s.charAt(0);
+
+						if (header !== STRING_ABSENT) {
+							var definition = schema.sequence[i];
+
+							var value = void 0;
+
+							if (header === STRING_UNDEFINDED) {
+								value = undefined;
+							} else if (header === STRING_NULL) {
+								value = null;
+							} else {
+								value = definition.type.unconvert(s.substring(1));
+							}
+
+							accumulator[definition.name] = value;
+						}
+
+						return accumulator;
+					}, {});
+				}
+			};
+		}
+	};
+}();
+
+},{"./../../utilities/is":28,"./types/boolean":16,"./types/date":17,"./types/double":18,"./types/float":19,"./types/int16":20,"./types/int32":21,"./types/int8":22,"./types/string":23,"./types/uint16":24,"./types/uint32":25,"./types/uint48":26,"./types/uint8":27}],16:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value ? 'T' : 'F';
+		},
+		unconvert: function unconvert(value) {
+			return value === 'T';
+		},
+		getName: function getName() {
+			return 'boolean';
+		}
+	};
+}();
+
+},{}],17:[function(require,module,exports){
+'use strict';
+
+var uint48 = require('./uint48');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return uint48.convert(value.getTime());
+		},
+		unconvert: function unconvert(value) {
+			return new Date(uint48.unconvert(value));
+		},
+		getName: function getName() {
+			return 'date';
+		}
+	};
+}();
+
+},{"./uint48":26}],18:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseFloat(value);
+		},
+		getName: function getName() {
+			return 'double';
+		}
+	};
+}();
+
+},{}],19:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseFloat(value);
+		},
+		getName: function getName() {
+			return 'float';
+		}
+	};
+}();
+
+},{}],20:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'int16';
+		}
+	};
+}();
+
+},{}],21:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'int32';
+		}
+	};
+}();
+
+},{}],22:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'int8';
+		}
+	};
+}();
+
+},{}],23:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	var string = {
+		convert: function convert(value) {
+			return value;
+		},
+		unconvert: function unconvert(value) {
+			return value;
+		},
+		getName: function getName() {
+			return 'string';
+		}
+	};
+
+	return string;
+}();
+
+},{}],24:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'uint16';
+		}
+	};
+}();
+
+},{}],25:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'uint32';
+		}
+	};
+}();
+
+},{}],26:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'uint48';
+		}
+	};
+}();
+
+},{}],27:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		convert: function convert(value) {
+			return value.toString();
+		},
+		unconvert: function unconvert(value) {
+			return Number.parseInt(value);
+		},
+		getName: function getName() {
+			return 'uint8';
+		}
+	};
+}();
+
+},{}],28:[function(require,module,exports){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
 	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 };
 
 module.exports = function () {
@@ -559,7 +879,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],17:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -685,7 +1005,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],18:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -2237,17 +2557,17 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":17,"ieee754":20,"isarray":19}],19:[function(require,module,exports){
+},{"base64-js":29,"ieee754":32,"isarray":31}],31:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],20:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var nBits = -7
@@ -2260,12 +2580,12 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   e = s & ((1 << (-nBits)) - 1)
   s >>= (-nBits)
   nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   m = e & ((1 << (-nBits)) - 1)
   e >>= (-nBits)
   nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
     e = 1 - eBias
@@ -2280,7 +2600,7 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
 
 exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
@@ -2313,7 +2633,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
       m = 0
       e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
+      m = ((value * c) - 1) * Math.pow(2, mLen)
       e = e + eBias
     } else {
       m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
@@ -2330,18 +2650,18 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],21:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
 	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 };
 
-var header = require('./../../../../lib/schema/header/header');
+var header = require('./../../../../../lib/schema/binary/header/header');
 
 describe('when generating a header byte', function () {
 	'use strict';
@@ -2452,19 +2772,19 @@ describe('when generating a header byte', function () {
 	});
 });
 
-},{"./../../../../lib/schema/header/header":1}],22:[function(require,module,exports){
+},{"./../../../../../lib/schema/binary/header/header":1}],34:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
 	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 };
 
-var factory = require('./../../../lib/schema/schema');
+var factory = require('./../../../../lib/schema/binary/schema');
 
 describe('when generating a schema', function () {
 	'use strict';
@@ -2589,6 +2909,38 @@ describe('when generating a schema', function () {
 
 			beforeEach(function () {
 				serialized = schema.encode({});
+			});
+
+			it('should be a buffer', function () {
+				expect(serialized instanceof Buffer).toEqual(true);
+			});
+
+			it('should be zero bytes long', function () {
+				expect(serialized.length).toEqual(0);
+			});
+
+			describe('and deserializing the buffer', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(false);
+				});
+			});
+		});
+
+		describe('and serializing { kilometers: 0.621 }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ kilometers: 0.621 });
 			});
 
 			it('should be a buffer', function () {
@@ -2747,23 +3099,59 @@ describe('when generating a schema', function () {
 				});
 			});
 		});
+
+		describe('and serializing { }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({});
+			});
+
+			it('should be a buffer', function () {
+				expect(serialized instanceof Buffer).toEqual(true);
+			});
+
+			it('should be bytes 0 long', function () {
+				expect(serialized.length).toEqual(0);
+			});
+
+			describe('and deserializing the buffer', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the amount field', function () {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(false);
+				});
+
+				it('should not contain the units field', function () {
+					expect(deserialized.hasOwnProperty('units')).toEqual(false);
+				});
+			});
+		});
 	});
 });
 
 }).call(this,require("buffer").Buffer)
-},{"./../../../lib/schema/schema":2,"buffer":18}],23:[function(require,module,exports){
+},{"./../../../../lib/schema/binary/schema":2,"buffer":30}],35:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
 	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 };
 
-var boolean = require('./../../../../lib/schema/types/boolean');
+var boolean = require('./../../../../../lib/schema/binary/types/boolean');
 
 describe('when checking the length of serialized boolean value', function () {
 	describe('and the value is true', function () {
@@ -2793,63 +3181,1509 @@ describe('when writing a boolean to a buffer', function () {
 	}();
 
 	var buffer = void 0;
-	var writeOffset = void 0;
 
 	beforeEach(function () {
 		buffer = allocateBuffer(1);
-		writeOffset = 0;
 	});
 
 	describe('and the value is true', function () {
+		var writeOffset = void 0;
+
 		beforeEach(function () {
-			boolean.write(buffer, true, writeOffset);
+			writeOffset = boolean.write(buffer, true, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
 		});
 
 		describe('and the buffer is read', function () {
-			var value = void 0;
-			var readOffset = void 0;
+			var decoded = void 0;
 
 			beforeEach(function () {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
+				decoded = boolean.read(buffer, 0);
 			});
 
 			it('should be a boolean value', function () {
-				expect(typeof value === 'undefined' ? 'undefined' : _typeof(value)).toEqual('boolean');
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('boolean');
 			});
 
 			it('should be a true value', function () {
-				expect(value).toEqual(true);
+				expect(decoded).toEqual(true);
 			});
 		});
 	});
 
 	describe('and the value is false', function () {
+		var writeOffset = void 0;
+
 		beforeEach(function () {
-			boolean.write(buffer, false, writeOffset);
+			writeOffset = boolean.write(buffer, false, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
 		});
 
 		describe('and the buffer is read', function () {
-			var value = void 0;
-			var readOffset = void 0;
+			var decoded = void 0;
 
 			beforeEach(function () {
-				readOffset = 0;
-
-				value = boolean.read(buffer, readOffset);
+				decoded = boolean.read(buffer, 0);
 			});
 
 			it('should be a boolean value', function () {
-				expect(typeof value === 'undefined' ? 'undefined' : _typeof(value)).toEqual('boolean');
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('boolean');
 			});
 
 			it('should be a true value', function () {
-				expect(value).toEqual(false);
+				expect(decoded).toEqual(false);
 			});
 		});
 	});
 });
 
 }).call(this,require("buffer").Buffer)
-},{"./../../../../lib/schema/types/boolean":3,"buffer":18}]},{},[21,22,23]);
+},{"./../../../../../lib/schema/binary/types/boolean":3,"buffer":30}],36:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var date = require('./../../../../../lib/schema/binary/types/date');
+
+describe('when checking the length of serialized date instance', function () {
+	describe('and the value is now', function () {
+		it('should be six', function () {
+			expect(date.getByteLength(new Date())).toEqual(6);
+		});
+	});
+});
+
+describe('when writing a date to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(6);
+	});
+
+	describe('and the value is now', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = date.write(buffer, original = new Date(), 0);
+		});
+
+		it('should write six bytes to the buffer', function () {
+			expect(writeOffset).toEqual(6);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = date.read(buffer, 0);
+			});
+
+			it('should be a date value', function () {
+				expect(decoded instanceof Date).toEqual(true);
+			});
+
+			it('should be have the correct time value', function () {
+				expect(decoded.getTime()).toEqual(original.getTime());
+			});
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/date":4,"buffer":30}],37:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var double = require('./../../../../../lib/schema/binary/types/double');
+
+describe('when checking the length of serialized double instance', function () {
+	describe('and the value is Math.E', function () {
+		it('should be 8', function () {
+			expect(double.getByteLength(Math.E)).toEqual(8);
+		});
+	});
+});
+
+describe('when writing a double to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(8);
+	});
+
+	describe('and the value is Math.E', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = double.write(buffer, original = Math.E, 0);
+		});
+
+		it('should write eight bytes to the buffer', function () {
+			expect(writeOffset).toEqual(8);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = double.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.E', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is one third', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = double.write(buffer, original = 1 / 3, 0);
+		});
+
+		it('should write eight bytes to the buffer', function () {
+			expect(writeOffset).toEqual(8);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = double.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal one third', function () {
+				expect(decoded).toEqual(1 / 3);
+			});
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/double":5,"buffer":30}],38:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var float = require('./../../../../../lib/schema/binary/types/float');
+
+describe('when checking the length of serialized float instance', function () {
+	describe('and the value is 1.5', function () {
+		it('should be 4', function () {
+			expect(float.getByteLength(1.5)).toEqual(4);
+		});
+	});
+});
+
+describe('when writing a float to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(4);
+	});
+
+	describe('and the value is 1.5', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = float.write(buffer, original = 1.5, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = float.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 1.5', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/float":6,"buffer":30}],39:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var int16 = require('./../../../../../lib/schema/binary/types/int16');
+
+describe('when checking the length of serialized int16 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 2', function () {
+			expect(int16.getByteLength(0)).toEqual(2);
+		});
+	});
+});
+
+describe('when writing a int16 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(4);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int16.write(buffer, original = 42, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 15) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int16.write(buffer, original = Math.pow(2, 15) - 1, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 15) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (Math.pow(2, 15) * -1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int16.write(buffer, original = Math.pow(2, 15) * -1, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 15) * -1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int16.write(buffer, Math.pow(2, 15), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int16.write(buffer, Math.pow(2, 15) * -1 - 1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/int16":7,"buffer":30}],40:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var int32 = require('./../../../../../lib/schema/binary/types/int32');
+
+describe('when checking the length of serialized int32 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 4', function () {
+			expect(int32.getByteLength(0)).toEqual(4);
+		});
+	});
+});
+
+describe('when writing a int32 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(4);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int32.write(buffer, original = 42, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int32.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 31) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int32.write(buffer, original = Math.pow(2, 31) - 1, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int32.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 31) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (Math.pow(2, 31) * -1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int32.write(buffer, original = Math.pow(2, 31) * -1, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int32.read(buffer, 0);
+			});
+
+			it('should be a nushould be a int32 valuember', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 31) * -1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int32.write(buffer, Math.pow(2, 31), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int32.write(buffer, Math.pow(2, 31) * -1 - 1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/int32":8,"buffer":30}],41:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var int8 = require('./../../../../../lib/schema/binary/types/int8');
+
+describe('when checking the length of serialized int8 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 1', function () {
+			expect(int8.getByteLength(0)).toEqual(1);
+		});
+	});
+});
+
+describe('when writing a int8 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(1);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int8.write(buffer, original = 42, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int8.read(buffer, 0);
+			});
+
+			it('should be a int8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 7) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int8.write(buffer, original = Math.pow(2, 7) - 1, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int8.read(buffer, 0);
+			});
+
+			it('should be a int8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 7) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (Math.pow(2, 7) * -1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = int8.write(buffer, original = Math.pow(2, 7) * -1, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = int8.read(buffer, 0);
+			});
+
+			it('should be a int8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 7) * -1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int8.write(buffer, Math.pow(2, 7), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return int8.write(buffer, Math.pow(2, 7) * -1 - 1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/int8":9,"buffer":30}],42:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var uint16 = require('./../../../../../lib/schema/binary/types/uint16');
+
+describe('when checking the length of serialized uint16 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 2', function () {
+			expect(uint16.getByteLength(0)).toEqual(2);
+		});
+	});
+});
+
+describe('when writing a uint16 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(4);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint16.write(buffer, original = 42, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 16) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint16.write(buffer, original = Math.pow(2, 16) - 1, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 16) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (0)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint16.write(buffer, original = 0, 0);
+		});
+
+		it('should write two bytes to the buffer', function () {
+			expect(writeOffset).toEqual(2);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint16.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 0', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint16.write(buffer, Math.pow(2, 16), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint16.write(buffer, -1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/uint16":11,"buffer":30}],43:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var uint32 = require('./../../../../../lib/schema/binary/types/uint32');
+
+describe('when checking the length of serialized uint32 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 4', function () {
+			expect(uint32.getByteLength(0)).toEqual(4);
+		});
+	});
+});
+
+describe('when writing a uint32 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(4);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint32.write(buffer, original = 42, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint32.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 32) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint32.write(buffer, original = Math.pow(2, 32) - 1, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint32.read(buffer, 0);
+			});
+
+			it('should be a number', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 32) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (0)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint32.write(buffer, original = 0, 0);
+		});
+
+		it('should write four bytes to the buffer', function () {
+			expect(writeOffset).toEqual(4);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint32.read(buffer, 0);
+			});
+
+			it('should be a nushould be a uint32 valuember', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 0', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint32.write(buffer, Math.pow(2, 32), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint32.write(buffer, -1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/uint32":12,"buffer":30}],44:[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var uint8 = require('./../../../../../lib/schema/binary/types/uint8');
+
+describe('when checking the length of serialized uint8 instance', function () {
+	describe('and the value is zero', function () {
+		it('should be 1', function () {
+			expect(uint8.getByteLength(0)).toEqual(1);
+		});
+	});
+});
+
+describe('when writing a uint8 to a buffer', function () {
+	'use strict';
+
+	var allocateBuffer = function () {
+		if (typeof Buffer.allocUnsafe === 'function') {
+			return Buffer.allocUnsafe;
+		} else {
+			return function (size) {
+				return new Buffer(size);
+			};
+		}
+	}();
+
+	var buffer = void 0;
+
+	beforeEach(function () {
+		buffer = allocateBuffer(1);
+	});
+
+	describe('and the value is 42', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint8.write(buffer, original = 42, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint8.read(buffer, 0);
+			});
+
+			it('should be a uint8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 42', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the maximum value (Math.pow(2, 8) - 1)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint8.write(buffer, original = Math.pow(2, 8) - 1, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint8.read(buffer, 0);
+			});
+
+			it('should be a uint8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal Math.pow(2, 8) - 1', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is the minimum value (0)', function () {
+		var original = void 0;
+		var writeOffset = void 0;
+
+		beforeEach(function () {
+			writeOffset = uint8.write(buffer, original = 0, 0);
+		});
+
+		it('should write one byte to the buffer', function () {
+			expect(writeOffset).toEqual(1);
+		});
+
+		describe('and the buffer is read', function () {
+			var decoded = void 0;
+
+			beforeEach(function () {
+				decoded = uint8.read(buffer, 0);
+			});
+
+			it('should be a uint8 value', function () {
+				expect(typeof decoded === 'undefined' ? 'undefined' : _typeof(decoded)).toEqual('number');
+			});
+
+			it('should equal 0', function () {
+				expect(decoded).toEqual(original);
+			});
+		});
+	});
+
+	describe('and the value is more than the maximum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint8.write(buffer, Math.pow(2, 8), 0);
+			}).toThrow();
+		});
+	});
+
+	describe('and the value is less than the minimum', function () {
+		it('an exception should be thrown', function () {
+			expect(function () {
+				return uint8.write(buffer, -1, 0);
+			}).toThrow();
+		});
+	});
+});
+
+}).call(this,require("buffer").Buffer)
+},{"./../../../../../lib/schema/binary/types/uint8":14,"buffer":30}],45:[function(require,module,exports){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var factory = require('./../../../../lib/schema/string/schema');
+
+describe('when generating a schema', function () {
+	'use strict';
+
+	describe('composed of [ { name: "miles", type: "int32" } ]', function () {
+		var schema = void 0;
+
+		beforeEach(function () {
+			schema = factory.create([{ name: "miles", type: "int32" }]);
+		});
+
+		describe('and serializing { miles: 41 }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ miles: 41 });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
+				});
+
+				it('should have a value of 41 for the miles field', function () {
+					expect(deserialized.miles).toEqual(41);
+				});
+			});
+		});
+
+		describe('and serializing { miles: null }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ miles: null });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
+				});
+
+				it('should have a null value for the miles field', function () {
+					expect(deserialized.miles).toEqual(null);
+				});
+			});
+		});
+
+		describe('and serializing { miles: undefined }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ miles: undefined });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(true);
+				});
+
+				it('should have an undefined value for the miles field', function () {
+					expect(deserialized.miles).toEqual(undefined);
+				});
+			});
+		});
+
+		describe('and serializing { }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({});
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(false);
+				});
+			});
+		});
+
+		describe('and serializing { kilometers: 0.621 }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ kilometers: 0.621 });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the miles field', function () {
+					expect(deserialized.hasOwnProperty('miles')).toEqual(false);
+				});
+			});
+		});
+	});
+
+	describe('composed of [ { name: "amount", type: "double" }, { name: "units", type: "string" } ]', function () {
+		var schema = void 0;
+
+		beforeEach(function () {
+			schema = factory.create([{ name: "amount", type: "double" }, { name: "units", type: "string" }]);
+		});
+
+		describe('and serializing { amount: Math.PI, units: "radians" }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ amount: Math.PI, units: "radians" });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should contain the amount field', function () {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(true);
+				});
+
+				it('should have a value of Math.PI for the amount field', function () {
+					expect(deserialized.amount).toEqual(Math.PI);
+				});
+
+				it('should contain the units field', function () {
+					expect(deserialized.hasOwnProperty('units')).toEqual(true);
+				});
+
+				it('should have a value of "radians" for the units field', function () {
+					expect(deserialized.units).toEqual("radians");
+				});
+			});
+		});
+
+		describe('and serializing { amount: 180 }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ amount: 180 });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should contain the amount field', function () {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(true);
+				});
+
+				it('should have a value of 180 for the amount field', function () {
+					expect(deserialized.amount).toEqual(180);
+				});
+
+				it('should not contain the units field', function () {
+					expect(deserialized.hasOwnProperty('units')).toEqual(false);
+				});
+			});
+		});
+
+		describe('and serializing { units: "degrees" }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({ units: "degrees" });
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the amount field', function () {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(false);
+				});
+
+				it('should contain the units field', function () {
+					expect(deserialized.hasOwnProperty('units')).toEqual(true);
+				});
+
+				it('should have a value of "degrees" for the units field', function () {
+					expect(deserialized.units).toEqual("degrees");
+				});
+			});
+		});
+
+		describe('and serializing { }', function () {
+			var serialized = void 0;
+
+			beforeEach(function () {
+				serialized = schema.encode({});
+			});
+
+			it('should be a string', function () {
+				expect(typeof serialized === 'undefined' ? 'undefined' : _typeof(serialized)).toEqual('string');
+			});
+
+			describe('and deserializing', function () {
+				var deserialized = void 0;
+
+				beforeEach(function () {
+					deserialized = schema.decode(serialized);
+				});
+
+				it('should be an object', function () {
+					expect(typeof deserialized === 'undefined' ? 'undefined' : _typeof(deserialized)).toEqual('object');
+				});
+
+				it('should not contain the amount field', function () {
+					expect(deserialized.hasOwnProperty('amount')).toEqual(false);
+				});
+
+				it('should not contain the units field', function () {
+					expect(deserialized.hasOwnProperty('units')).toEqual(false);
+				});
+			});
+		});
+	});
+});
+
+},{"./../../../../lib/schema/string/schema":15}]},{},[33,34,35,36,37,38,39,40,41,42,43,44,45]);

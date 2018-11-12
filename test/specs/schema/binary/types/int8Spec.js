@@ -1,4 +1,4 @@
-var int8 = require('./../../../../lib/schema/types/int8');
+var int8 = require('./../../../../../lib/schema/binary/types/int8');
 
 describe('when checking the length of serialized int8 instance', () => {
 	describe('and the value is zero', () => {

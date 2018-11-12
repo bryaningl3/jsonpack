@@ -1,4 +1,4 @@
-var factory = require('./../../../lib/schema/schema');
+const factory = require('./../../../../lib/schema/string/schema');
 
 describe('when generating a schema', () => {
 	'use strict';
@@ -17,15 +17,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ miles: 41 });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be five bytes long', () => {
-				expect(serialized.length).toEqual(5);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -53,15 +49,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ miles: null });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be one byte long', () => {
-				expect(serialized.length).toEqual(1);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -89,15 +81,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ miles: undefined });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be one byte long', () => {
-				expect(serialized.length).toEqual(1);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -125,15 +113,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be zero bytes long', () => {
-				expect(serialized.length).toEqual(0);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -157,15 +141,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ kilometers: 0.621 });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be zero bytes long', () => {
-				expect(serialized.length).toEqual(0);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -197,15 +177,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ amount: Math.PI, units: "radians" });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be bytes 19 long', function() {
-				expect(serialized.length).toEqual(19);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -241,15 +217,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ amount: 180 });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be bytes 9 long', function() {
-				expect(serialized.length).toEqual(9);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -281,15 +253,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ units: "degrees" });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be bytes 19 long', function() {
-				expect(serialized.length).toEqual(10);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {
@@ -321,15 +289,11 @@ describe('when generating a schema', () => {
 				serialized = schema.encode({ });
 			});
 
-			it('should be a buffer', function() {
-				expect(serialized instanceof Buffer).toEqual(true);
+			it('should be a string', () => {
+				expect(typeof serialized).toEqual('string');
 			});
 
-			it('should be bytes 0 long', function() {
-				expect(serialized.length).toEqual(0);
-			});
-
-			describe('and deserializing the buffer', () => {
+			describe('and deserializing', () => {
 				let deserialized;
 
 				beforeEach(() => {

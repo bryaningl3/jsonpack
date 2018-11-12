@@ -1,22 +1,19 @@
-var gulp = require('gulp');
+const gulp = require('gulp');
 
-var babelify = require('babelify');
-var browserify = require('browserify');
-var buffer = require('vinyl-buffer');
-var bump = require('gulp-bump');
-var git = require('gulp-git');
-var gitModified = require('gulp-gitmodified');
-var glob = require('glob');
-var helpers = require('babelify-external-helpers');
-var jasmine = require('gulp-jasmine');
-var jshint = require('gulp-jshint');
-var rename = require('gulp-rename');
-var runSequence = require('run-sequence');
-var source = require('vinyl-source-stream');
-var uglify = require('gulp-uglify');
-var util = require('gulp-util');
+const babelify = require('babelify');
+const browserify = require('browserify');
+const buffer = require('vinyl-buffer');
+const bump = require('gulp-bump');
+const git = require('gulp-git');
+const gitModified = require('gulp-gitmodified');
+const glob = require('glob');
+const jasmine = require('gulp-jasmine');
+const jshint = require('gulp-jshint');
+const runSequence = require('run-sequence');
+const source = require('vinyl-source-stream');
+const util = require('gulp-util');
 
-var fs = require('fs');
+const fs = require('fs');
 
 function getVersionFromPackage() {
 	return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
@@ -54,7 +51,7 @@ gulp.task('push-changes', function (cb) {
 });
 
 gulp.task('create-tag', function (cb) {
-	var version = getVersionFromPackage();
+	const version = getVersionFromPackage();
 
 	git.tag(version, 'Release ' + version, function (error) {
 		if (error) {
@@ -63,18 +60,6 @@ gulp.task('create-tag', function (cb) {
 
 		git.push('origin', 'master', { args: '--tags' }, cb);
 	});
-});
-
-gulp.task('build-browser', function() {
-	return browserify('./index.js')
-		.transform('babelify', {presets: ['es2015']})
-		.bundle()
-		.pipe(source('jsonpack-' + getVersionForComponent() + '.js'))
-		.pipe(buffer())
-		.pipe(gulp.dest('./dist'))
-		.pipe(uglify())
-		.pipe(rename('jsonpack-' + getVersionForComponent() + '-min.js'))
-		.pipe(gulp.dest('dist/'));
 });
 
 gulp.task('build-browser-tests', function () {

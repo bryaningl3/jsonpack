@@ -1,4 +1,4 @@
-var boolean = require('./../../../../lib/schema/types/boolean');
+var boolean = require('./../../../../../lib/schema/binary/types/boolean');
 
 describe('when checking the length of serialized boolean value', () => {
 	describe('and the value is true', () => {

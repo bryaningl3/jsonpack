@@ -504,7 +504,7 @@ module.exports = function () {
 	}, {});
 
 	var TOKEN = {
-		DELIMITER: '|',
+		DELIMITER: '~',
 		ABSENT: '-',
 		PRESENT: '+',
 		UNDEFINED: '<',

@@ -15,10 +15,6 @@ function getVersionFromPackage() {
 	return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 }
 
-function getVersionForComponent() {
-	return getVersionFromPackage().split('.').slice(0, 2).join('.');
-}
-
 gulp.task('ensure-clean-working-directory', (cb) => {
 	gitStatus((err, status) => {
 		if (err, !status.clean) {
@@ -59,15 +55,14 @@ gulp.task('create-tag', (cb) => {
 
 gulp.task('build-browser-tests', () => {
 	return browserify({ entries: glob.sync('test/specs/**/*.js') })
-		.transform('babelify', {presets: ['es2015']})
 		.bundle()
-		.pipe(source('jsonpack-tests-' + getVersionForComponent() + '.js'))
+		.pipe(source('SpecRunner.js'))
 		.pipe(buffer())
-		.pipe(gulp.dest('test/dist'));
+		.pipe(gulp.dest('./test/dist'));
 });
 
 gulp.task('execute-browser-tests', () => {
-	return gulp.src('test/dist/jsonpack-tests-' + getVersionForComponent() + '.js')
+	return gulp.src('test/SpecRunner.js')
 		.pipe(jasmine());
 });
 
@@ -83,14 +78,14 @@ gulp.task('execute-tests', gulp.series(
 ));
 
 gulp.task('release', gulp.series(
-		'ensure-clean-working-directory',
-		'build-browser-tests',
-		'execute-browser-tests',
-		'execute-node-tests',
-		'bump-version',
-		'commit-changes',
-		'push-changes',
-		'create-tag'
+	'ensure-clean-working-directory',
+	'build-browser-tests',
+	'execute-browser-tests',
+	'execute-node-tests',
+	'bump-version',
+	'commit-changes',
+	'push-changes',
+	'create-tag'
 ));
 
 gulp.task('lint', () => {

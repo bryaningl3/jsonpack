@@ -32,7 +32,7 @@ gulp.task('bump-version', () => {
 });
 
 gulp.task('commit-changes', () => {
-	return gulp.src([ './', './package.json', './index.js', ])
+	return gulp.src([ './', './package.json', './index.js', './test/SpecRunner.js' ])
 		.pipe(git.add())
 		.pipe(git.commit('Release. Bump version number'));
 });
@@ -58,7 +58,7 @@ gulp.task('build-browser-tests', () => {
 		.bundle()
 		.pipe(source('SpecRunner.js'))
 		.pipe(buffer())
-		.pipe(gulp.dest('./test/dist'));
+		.pipe(gulp.dest('./test/'));
 });
 
 gulp.task('execute-browser-tests', () => {
@@ -89,7 +89,7 @@ gulp.task('release', gulp.series(
 ));
 
 gulp.task('lint', () => {
-	return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./dist/**', '!./test/dist/**' ])
+	return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./dist/**', '!./test/SpecRunner.js' ])
 		.pipe(jshint({'esversion': 6}))
 		.pipe(jshint.reporter('default'));
 });

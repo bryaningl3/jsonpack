@@ -72,19 +72,8 @@ module.exports = (() => {
 
   const allocateBuffer = (() => {
     if (is.fn(Buffer.allocUnsafe)) {
-      return Buffer.allocUnsafe;
-    } else {
-      return function (size) {
-        return new Buffer(size);
-      };
-    }
-  })();
+ 
 
-  return {
-    create: fields => {
-      const schema = fields.reduce((accumulator, field, index) => {
-        const name = field.name;
-        const definition = {
           name: name,
           index: index,
           type: types[field.type]

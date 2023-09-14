@@ -3,9 +3,6 @@ const is = require('./../../../utilities/is');
 
 module.exports = (() => {
   'use strict';
-
-  const PRESENT_MASK = 1 << 6;
-  const UNDEFINED_MASK = 1 << 7;
   const FIELD_MASK = PRESENT_MASK | UNDEFINED_MASK;
   const header = {
     getByte(index, value) {
